@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tourism Analytics Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: #0e1726;
+            color: #f4f6fb;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        .dashboard-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+        }
+        .dashboard-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .dashboard-header h1 {
+            font-size: 2rem;
+            margin: 0;
+        }
+        .dashboard-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .dashboard-actions a, .dashboard-actions button {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .dashboard-actions a:hover,
+        .dashboard-actions button:hover {
+            background: #1d4ed8;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+        .card {
+            background: #1f2937;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .card h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            color: #f8fafc;
+        }
+        .stat-subtext {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        .list-section {
+            margin-top: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .list-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0 0;
+        }
+        .list-card li {
+            padding: 0.65rem 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #e2e8f0;
+        }
+        .list-card li i {
+            color: #22d3ee;
+        }
+        .status-pill {
+            margin-left: auto;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 999px;
+            text-transform: uppercase;
+        }
+        .status-active {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+        .status-offline {
+            background: rgba(248, 113, 113, 0.15);
+            color: #f87171;
+        }
+        .event-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .event-info strong {
+            font-size: 0.95rem;
+            color: #f8fafc;
+        }
+        .event-info span {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+        .event-meta {
+            margin-left: auto;
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            color: #cbd5f5;
+        }
+        .event-meta .amount {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+        .event-meta small {
+            color: #94a3b8;
+            font-size: 0.75rem;
+        }
+        .last-updated {
+            margin-top: 1rem;
+            color: #94a3b8;
+        }
+        @media (max-width: 600px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .dashboard-actions {
+                width: 100%;
+            }
+            .dashboard-actions a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <div class="dashboard-header">
+            <div>
+                <h1>Tourism Operations Dashboard</h1>
+                <p class="stat-subtext">Real-time visibility into visitors, revenue, and sessions</p>
+            </div>
+            <div class="dashboard-actions">
+                <a href="index.html"><i class="fas fa-arrow-left"></i> Back to Site</a>
+                <button id="refreshBtn"><i class="fas fa-rotate"></i> Refresh</button>
+            </div>
+        </div>
+
+        <section class="grid">
+            <div class="card">
+                <h3>Total Visitors</h3>
+                <div class="stat-value" id="totalVisitors">0</div>
+                <p class="stat-subtext">Unique site visits recorded</p>
+            </div>
+            <div class="card">
+                <h3>Total Revenue</h3>
+                <div class="stat-value" id="totalRevenue">₹0</div>
+                <p class="stat-subtext">Revenue logged from bookings</p>
+            </div>
+            <div class="card">
+                <h3>Total Logins</h3>
+                <div class="stat-value" id="totalLogins">0</div>
+                <p class="stat-subtext">Completed authentications</p>
+            </div>
+            <div class="card">
+                <h3>Total Logouts</h3>
+                <div class="stat-value" id="totalLogouts">0</div>
+                <p class="stat-subtext">Sessions ended</p>
+            </div>
+            <div class="card">
+                <h3>Currently Online</h3>
+                <div class="stat-value" id="activeUsersCount">0</div>
+                <p class="stat-subtext">Users with active sessions</p>
+            </div>
+        </section>
+
+        <section class="list-section">
+            <div class="card list-card">
+                <h3>Active Users</h3>
+                <ul id="activeUsersList">
+                    <li>No one online right now</li>
+                </ul>
+            </div>
+            <div class="card list-card">
+                <h3>Recently Logged Out</h3>
+                <ul id="loggedOutUsersList">
+                    <li>No recent logouts</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="list-section">
+            <div class="card list-card">
+                <h3>Recent Logins</h3>
+                <ul id="recentLoginsList">
+                    <li>No login activity yet</li>
+                </ul>
+            </div>
+            <div class="card list-card">
+                <h3>Latest Bookings</h3>
+                <ul id="recentBookingsList">
+                    <li>No bookings recorded yet</li>
+                </ul>
+            </div>
+        </section>
+
+        <p class="last-updated" id="lastUpdated">Last updated: --</p>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
+
